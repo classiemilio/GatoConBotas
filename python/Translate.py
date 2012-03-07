@@ -2,9 +2,10 @@ import csv, math
 
 class Word:
 
-	def __init__(self, spanish, english):
+	def __init__(self, spanish, english, pos):
 		self.english = english
 		self.spanish = spanish
+		self.pos = pos
 
 class Translator:
 	
@@ -18,7 +19,7 @@ class Translator:
 		self.dict = {}
 		reader = csv.reader(infile)
 		for row in reader:
-			self.dict[row[0]] = row[1]
+			self.dict[row[0]] = (row[1],row[2])
 		infile.close()
 		
 
@@ -29,12 +30,37 @@ class Translator:
 		data = []
 		for line in lines:
 			sentence = []
-			lineSpl = map(lambda word: word.strip('.,:"').lower(), line.split())
+			lineSpl = map(lambda word: word.lower(), line.split())
+			lineSpl = self.splitPunct(lineSpl)
 			for w in lineSpl:
-				word = Word(w, self.dict.get(w, 'NOTFOUND'))
+				entry = self.dict.get(w, ('NOTFOUND', 'UNKNOWN'))
+				word = Word(w, entry[0], entry[1])
 				sentence.append(word)
 			data.append(sentence)
 		return data
+		
+	def splitPunct(self, sentence):
+		newSentence = []	
+		for word in sentence:
+			newWords = []
+			while 1 in [c == word[-1:] for c in ['.', ',', ':', '"']]:
+				if word[-1:] == '.':
+					newWords.insert(0, "<PERIOD>")
+				elif word[-1:] == ',':
+					newWords.insert(0, "<COMMA>")
+				elif word[-1:] == ':':
+					newWords.insert(0, "<COLON>")
+				elif word[-1:] == '"':
+					newWords.insert(0, "<CLOSEQUOTE>")
+				else:
+					newWords.insert(0, "<OTHERPUNCT")
+				word = word[:-1]
+			newWords.insert(0, word)
+			if (newWords[0][0] == '"'):
+				newWords[0] = newWords[0][1:]
+				newWords.insert(0, "<OPENQUOTE>")
+			newSentence.extend(newWords)
+		return newSentence
 		
 	def addRules(self):
 		
@@ -47,6 +73,22 @@ class Translator:
 				newSentence.append(word)
 			return newSentence
 		self.rules.append(mergeTo)
+		
+		def flipNounAdj(sentence):
+			newSentence = []
+			sentenceLen = len(sentence)
+			idx = 0
+			while idx < sentenceLen:
+				word = sentence[idx]
+				if word.pos == 'NOUN' and idx < sentenceLen - 1 and sentence[idx+1].pos == "ADJ":
+					newSentence.append(sentence[idx+1])
+					newSentence.append(word)
+					idx += 2
+				else:
+					newSentence.append(word)
+					idx += 1
+			return newSentence
+		self.rules.append(flipNounAdj)
 		
 	def applyRule(self, rule, sentence):
 		return rule(sentence)
@@ -62,8 +104,21 @@ class Translator:
 			for idx,word in enumerate(sentence):
 				if idx == 0:
 					word.english = word.english[0].title() + word.english[1:]
-				result += word.english + " "
-			result = result[:-1] + ". \n\n"
+				if word.english == "<PERIOD>":
+					result = result[:-1] + '. '
+				elif word.english == "<COMMA>":
+					result = result[:-1] + ', '
+				elif word.english == "<COLON>":
+						result = result[:-1] + ': '
+				elif word.english == "<OPENQUOTE>":
+					result += '"'
+				elif word.english == "<CLOSEQUOTE>":
+					result = result[:-1] + '" '
+				elif word.english == "<OTHERPUNCT>":
+					result = result[:-1] + unichr(0xFFFD) + ' '
+				else:
+					result += word.english + " "
+			result = result[:-1] + "\n\n"
 		return result
 
 	def score(self, data):
