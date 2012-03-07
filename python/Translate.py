@@ -132,8 +132,6 @@ class Translator:
 		for line, datum in zip(lines, data):
 			line = line.strip('.,:"\n').split()
 			datum = datum.strip('.,:"\n').split()
-			print str(line)
-			print str(datum)
 			for i, d in enumerate(datum):
 				minDistance = 100000
 				for j, l in enumerate(line):
