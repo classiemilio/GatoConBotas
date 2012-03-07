@@ -1,4 +1,4 @@
-import csv
+import csv, math
 
 class Word:
 
@@ -66,6 +66,32 @@ class Translator:
 			result = result[:-1] + ". \n\n"
 		return result
 
+	def score(self, data):
+		catFile = '../data/cat.txt'
+		infile = open(catFile)
+		lines = infile.readlines()
+		infile.close()
+		data = data.split(' \n\n')
+		for line, datum in zip(lines, data):
+			line = line.strip('.,:"\n')
+			line = line.split()
+			datum = datum.split()
+			totalDistance = 0
+			missedWords = 0
+			for i, d in enumerate(datum):
+				minDistance = 100000
+				for j, l in enumerate(line):
+					if d.lower() == l.lower():
+						curDistance = math.fabs(i-j)
+						if curDistance < minDistance: minDistance = curDistance
+				if minDistance == 100000: 
+					missedWords += 1
+				else:
+					totalDistance += minDistance 
+		print 'Total error distance: ' + str(totalDistance)
+		print 'Words in gold that are not in gato: ' + str(missedWords)
+			
+
 if __name__ == '__main__':
 	gatoFile = '../data/gato.txt'
 	dictFile = '../data/dict.csv'
@@ -74,3 +100,4 @@ if __name__ == '__main__':
 	data = translator.readInData(gatoFile)
 	translated = translator.translate(data)
 	print translated
+	translator.score(translated)
