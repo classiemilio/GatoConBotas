@@ -165,8 +165,13 @@ class Translator:
 		result = ""
 		for sentence in data:
 			
-			for rule in self.rules:
-				sentence = self.applyRule(rule, sentence)
+			# Apply the rules repeatedly until we converge to a single sentence
+			while True:
+				oldSentence = sentence
+				for rule in self.rules:
+					sentence = self.applyRule(rule, sentence)
+				if oldSentence == sentence:
+					break
 
 			for idx,word in enumerate(sentence):
 				if idx == 0:
