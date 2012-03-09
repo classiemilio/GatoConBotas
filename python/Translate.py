@@ -146,7 +146,7 @@ class Translator:
 			while idx < sentenceLen:
 				word = sentence[idx]
 				if word.pos == 'ARTICLE' and idx < sentenceLen - 2 and idx > 0 and sentence[idx-1].pos != 'PUNCT' and sentence[idx+1].pos != 'PUNCT':
-					trigram = ' '.join(sentence[idx - 1].english) + ' ' + ' '.join(word.english) + ' ' + ' '.join(sentence[idx + 1].english)
+					trigram = sentence[idx - 1].english[-1] + ' ' + ' '.join(word.english) + ' ' + sentence[idx + 1].english[0]
 					if self.trigramCounts.get(trigram, 0) > 0:
 						newSentence.append(word)
 				else:
@@ -222,7 +222,6 @@ class Translator:
 			def cleanup(word): return word.strip('.,:"\n').lower()
 			goldLine = map(cleanup, goldLine.split())
 			dataLine = map(cleanup, dataLine.split())
-			print goldLine, "\n", dataLine, "\n\n"
 			distortions.append([])
 			
 			def getNearestIdx(line, queryWord, queryIdx):
