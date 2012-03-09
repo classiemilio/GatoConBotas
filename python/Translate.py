@@ -17,6 +17,7 @@ class Translator:
 		self.trigramCounts = None
 
 	def setNGrams(self):
+		print "Building bi/trigram corpus..."
 		self.bigramCounts = {}
 		self.trigramCounts = {}
 		bWords = brown.words()
@@ -29,6 +30,7 @@ class Translator:
 				if i + 2 < bLen:
 					trigram = bigram + ' ' + bWords[i + 2]
 					self.trigramCounts[trigram] = self.trigramCounts.get(trigram, 0) + 1
+		print "Finished building corpus."
 
 	def readInDictionary(self, file):
 		infile = open(file, 'rb')
@@ -50,7 +52,7 @@ class Translator:
 			lineSpl = self.splitPunct(lineSpl)
 			for w in lineSpl:
 				entry = self.dict.get(w, ('NOTFOUND', 'UNKNOWN'))
-				word = Word(w, entry[0], entry[1])
+				word = Word(w, entry[0].split(), entry[1])
 				sentence.append(word)
 			data.append(sentence)
 		return data
@@ -84,8 +86,8 @@ class Translator:
 			newSentence = []
 			sentenceLen = len(sentence)
 			for idx,word in enumerate(sentence):
-				if word.english == 'to' and idx < sentenceLen - 1 and sentence[idx+1].english.startswith('to '):
-					sentence[idx+1].english = sentence[idx+1].english[3:]
+				if word.english[-1] == 'to' and idx < sentenceLen - 1 and sentence[idx+1].english[0] == 'to':
+					sentence[idx+1].english = sentence[idx+1].english[1:]
 				newSentence.append(word)
 			return newSentence
 		self.rules.append(mergeTo)
@@ -105,6 +107,18 @@ class Translator:
 					idx += 1
 			return newSentence
 		self.rules.append(flipNounAdj)
+		
+		def removeEmptyWords(sentence):
+			newSentence = []
+			sentenceLen = len(sentence)
+			idx = 0
+			while idx < sentenceLen:
+				word = sentence[idx]
+				if len(word.english) > 0:
+					newSentence.append(word)
+				idx += 1
+			return newSentence
+		self.rules.append(removeEmptyWords)
 
 		# "No tenia comida" -> "Had no food" ('no' should go after the next word if its a verb)
 		def flipNo(sentence):
@@ -113,7 +127,7 @@ class Translator:
 			idx = 0
 			while idx < sentenceLen:
 				word = sentence[idx]
-				if word.english == 'no' and idx < sentenceLen - 2 and sentence[idx+1].pos == "VERB":
+				if word.english == ['no'] and idx < sentenceLen - 2 and sentence[idx+1].pos == "VERB":
 					newSentence.append(sentence[idx+1])
 					newSentence.append(word)
 					idx += 2
@@ -131,8 +145,8 @@ class Translator:
 			idx = 0
 			while idx < sentenceLen:
 				word = sentence[idx]
-				if word.pos == 'ARTICLE' and idx < sentenceLen - 2 and idx > 0 and sentence[idx-1].pos != 'PUNCT' and sentence[idx+1] != 'PUNCT':
-					trigram = sentence[idx - 1].english + ' ' + word.english + ' ' + sentence[idx + 1].english
+				if word.pos == 'ARTICLE' and idx < sentenceLen - 2 and idx > 0 and sentence[idx-1].pos != 'PUNCT' and sentence[idx+1].pos != 'PUNCT':
+					trigram = ' '.join(sentence[idx - 1].english) + ' ' + ' '.join(word.english) + ' ' + ' '.join(sentence[idx + 1].english)
 					if self.trigramCounts.get(trigram, 0) > 0:
 						newSentence.append(word)
 				else:
@@ -147,7 +161,7 @@ class Translator:
 			idx = 0
 			while idx < sentenceLen:
 				word = sentence[idx]
-				if (word.english == 'him' or word.english == 'her' or word.english == 'them') and idx < sentenceLen - 1 and sentence[idx+1].pos == "VERB":
+				if (word.english == ['him'] or word.english == ['her'] or word.english == ['them']) and idx < sentenceLen - 1 and sentence[idx+1].pos == "VERB":
 					newSentence.append(sentence[idx+1])
 					newSentence.append(word)
 					idx += 2
@@ -173,50 +187,63 @@ class Translator:
 				if oldSentence == sentence:
 					break
 
-			for idx,word in enumerate(sentence):
-				if idx == 0:
-					word.english = word.english[0].title() + word.english[1:]
-				if word.english == "<PERIOD>":
-					result = result[:-1] + '. '
-				elif word.english == "<COMMA>":
-					result = result[:-1] + ', '
-				elif word.english == "<COLON>":
-						result = result[:-1] + ': '
-				elif word.english == "<OPENQUOTE>":
-					result += '"'
-				elif word.english == "<CLOSEQUOTE>":
-					result = result[:-1] + '" '
-				elif word.english == "<OTHERPUNCT>":
-					result = result[:-1] + unichr(0xFFFD) + ' '
-				else:
-					result += word.english + " "
+			idx = 0
+			for wordGrp in sentence:
+				for word in wordGrp.english:
+					if idx == 0:
+						word = word[0].title() + word[1:]
+					if word == "<PERIOD>":
+						result = result[:-1] + '. '
+					elif word == "<COMMA>":
+						result = result[:-1] + ', '
+					elif word == "<COLON>":
+							result = result[:-1] + ': '
+					elif word == "<OPENQUOTE>":
+						result += '"'
+					elif word == "<CLOSEQUOTE>":
+						result = result[:-1] + '" '
+					elif word == "<OTHERPUNCT>":
+						result = result[:-1] + unichr(0xFFFD) + ' '
+					else:
+						result += word + " "
+					idx += 1
 			result = result[:-1] + "\n\n"
 		return result
 
 	def score(self, data):
 		catFile = '../data/cat.txt'
 		infile = open(catFile)
-		lines = infile.readlines()
+		goldLines = infile.readlines()
 		infile.close()
-		data = data.split('\n\n')
+		dataLines = data.split('\n\n')
 		distortions = []
 		missedWords = 0
-		for line, datum in zip(lines, data):
-			line = line.strip('.,:"\n').split()
-			datum = datum.strip('.,:"\n').split()
-			distortions.append([0])
-			for i, d in enumerate(datum):
-				minDistance = 100000
-				for j, l in enumerate(line):
-					if d.lower() == l.lower():
-						curDistance = math.fabs(i-j)
-						if curDistance < minDistance: minDistance = curDistance
-				if minDistance == 100000: 
-					missedWords += 1
-					distortion = 0
+		for goldLine, dataLine in zip(goldLines, dataLines):
+			def cleanup(word): return word.strip('.,:"\n').lower()
+			goldLine = map(cleanup, goldLine.split())
+			dataLine = map(cleanup, dataLine.split())
+			print goldLine, "\n", dataLine, "\n\n"
+			distortions.append([])
+			
+			def getNearestIdx(line, queryWord, queryIdx):
+				minDist = None
+				minIdx = None
+				for idx,word in enumerate(line):
+					curDist = math.fabs(queryIdx - idx)
+					if queryWord == word and (minDist == None or curDist < minDist):
+						minDist = curDist
+						minIdx = idx
+				return minIdx
+			
+			lastGoldIdx = 0
+			for dataIdx, dataWord in enumerate(dataLine):
+				curGoldIdx = getNearestIdx(goldLine, dataWord, dataIdx)
+				if curGoldIdx != None:
+					distortions[-1].append(curGoldIdx - lastGoldIdx - 1)
+					lastGoldIdx = curGoldIdx
 				else:
-					distortion = minDistance - distortions[-1][-1] - 1
-				distortions[-1].append(distortion)
+					missedWords += 1
+
 		distortions = [item for sublist in distortions for item in sublist]
 		print 'Total distortion: ' + str(reduce(lambda x, y: x+math.fabs(y), distortions))
 		print 'Words in gold that are not in gato: ' + str(missedWords)
