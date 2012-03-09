@@ -131,7 +131,7 @@ class Translator:
 			idx = 0
 			while idx < sentenceLen:
 				word = sentence[idx]
-				if word.pos == 'ARTICLE' and idx < sentenceLen - 2 and idx > 0:
+				if word.pos == 'ARTICLE' and idx < sentenceLen - 2 and idx > 0 and sentence[idx-1].pos != 'PUNCT' and sentence[idx+1] != 'PUNCT':
 					trigram = sentence[idx - 1].english + ' ' + word.english + ' ' + sentence[idx + 1].english
 					if self.trigramCounts.get(trigram, 0) > 0:
 						newSentence.append(word)
