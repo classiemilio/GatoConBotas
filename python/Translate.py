@@ -84,8 +84,8 @@ class Translator:
 			newSentence = []
 			sentenceLen = len(sentence)
 			for idx,word in enumerate(sentence):
-				if word.english == 'to' and idx < sentenceLen - 1 and sentence[idx+1].english.startswith('to'):
-					continue
+				if word.english == 'to' and idx < sentenceLen - 1 and sentence[idx+1].english.startswith('to '):
+					sentence[idx+1].english = sentence[idx+1].english[3:]
 				newSentence.append(word)
 			return newSentence
 		self.rules.append(mergeTo)
@@ -140,6 +140,22 @@ class Translator:
 				idx += 1
 			return newSentence
 		self.rules.append(removeExtraneousArticles)
+		
+		def flipHimVerb(sentence):
+			newSentence = []
+			sentenceLen = len(sentence)
+			idx = 0
+			while idx < sentenceLen:
+				word = sentence[idx]
+				if word.english == 'him' and idx < sentenceLen - 1 and sentence[idx+1].pos == "VERB":
+					newSentence.append(sentence[idx+1])
+					newSentence.append(word)
+					idx += 2
+				else:
+					newSentence.append(word)
+					idx += 1
+			return newSentence
+		self.rules.append(flipHimVerb)
 		
 	def applyRule(self, rule, sentence):
 		return rule(sentence)
