@@ -98,7 +98,7 @@ class Translator:
 			idx = 0
 			while idx < sentenceLen:
 				word = sentence[idx]
-				if word.pos == 'NOUN' and idx < sentenceLen - 2 and sentence[idx+1].pos == "ADJ":
+				if (word.pos == 'NOUN' or word.pos == 'PRONOUN') and idx < sentenceLen - 2 and sentence[idx+1].pos == "ADJ":
 					newSentence.append(sentence[idx+1])
 					newSentence.append(word)
 					idx += 2

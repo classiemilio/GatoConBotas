@@ -51,11 +51,11 @@ joven,young,ADJ
 la,the,ARTICLE
 las,the,ARTICLE
 lavándose,washing,GERUND
-le,him,NOUN
+le,him,PRONOUN
 limpió,cleaned,VERB
 llevaba,was taking,VERB
-llevó,took,VERN
-lo,it,NOUN
+llevó,took,VERB
+lo,it,PRONOUN
 los,the,ARTICLE
 marqués,marquis,NOUN
 mi,my,ADJ
@@ -87,7 +87,7 @@ ropas,clothes,NOUN
 rápidamente,quickly,ADVERB
 río,river,NOUN
 salud,health,NOUN
-se,him,NOUN
+se,him,PRONOUN
 semana,week,NOUN
 señor,man,NOUN
 siguiente,following,ADJ
@@ -104,7 +104,7 @@ vio,saw,VERB
 vivía,was living,VERB
 volvió,came back,VERB
 y,and,CONJ
-él,he,NOUN
+él,he,PRONOUN
 único,only,ADJ
 <PERIOD>,<PERIOD>,PUNCT
 <COMMA>,<COMMA>,PUNCT
