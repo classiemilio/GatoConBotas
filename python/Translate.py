@@ -80,7 +80,7 @@ class Translator:
 			idx = 0
 			while idx < sentenceLen:
 				word = sentence[idx]
-				if word.pos == 'NOUN' and idx < sentenceLen - 1 and sentence[idx+1].pos == "ADJ":
+				if word.pos == 'NOUN' and idx < sentenceLen - 2 and sentence[idx+1].pos == "ADJ":
 					newSentence.append(sentence[idx+1])
 					newSentence.append(word)
 					idx += 2
@@ -88,7 +88,24 @@ class Translator:
 					newSentence.append(word)
 					idx += 1
 			return newSentence
-		#self.rules.append(flipNounAdj)
+		self.rules.append(flipNounAdj)
+
+		# "No tenia comida" -> "Had no food" ('no' should go after the next word if its a verb)
+		def flipNo(sentence):
+			newSentence = []
+			sentenceLen = len(sentence)
+			idx = 0
+			while idx < sentenceLen:
+				word = sentence[idx]
+				if word.english == 'no' and idx < sentenceLen - 2 and sentence[idx+1].pos == "VERB":
+					newSentence.append(sentence[idx+1])
+					newSentence.append(word)
+					idx += 2
+				else:
+					newSentence.append(word)
+					idx += 1
+			return newSentence
+		self.rules.append(flipNo)
 		
 	def applyRule(self, rule, sentence):
 		return rule(sentence)
