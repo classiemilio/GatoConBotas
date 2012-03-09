@@ -1,4 +1,5 @@
 import csv, math
+from nltk.corpus import brown
 
 class Word:
 
@@ -12,7 +13,22 @@ class Translator:
 	def __init__(self):
 		self.rules = []
 		self.addRules()
-	
+		self.bigramCounts = None
+		self.trigramCounts = None
+
+	def setNGrams(self):
+		self.bigramCounts = {}
+		self.trigramCounts = {}
+		bWords = brown.words()
+		bLen = len(bWords)
+		for i in range(bLen):
+			word = bWords[i]
+			if i + 1 < bLen:
+				bigram = word.lower() + ' ' + bWords[i + 1].lower()
+				self.bigramCounts[bigram] = self.bigramCounts.get(bigram, 0) + 1
+				if i + 2 < bLen:
+					trigram = bigram + ' ' + bWords[i + 2]
+					self.trigramCounts[trigram] = self.trigramCounts.get(trigram, 0) + 1
 
 	def readInDictionary(self, file):
 		infile = open(file, 'rb')
@@ -106,6 +122,24 @@ class Translator:
 					idx += 1
 			return newSentence
 		self.rules.append(flipNo)
+
+		def removeExtraneousArticles(sentence):
+			if not self.bigramCounts:
+				self.setNGrams() 
+			newSentence = []
+			sentenceLen = len(sentence)
+			idx = 0
+			while idx < sentenceLen:
+				word = sentence[idx]
+				if word.pos == 'ARTICLE' and idx < sentenceLen - 2 and idx > 0:
+					trigram = sentence[idx - 1].english + ' ' + word.english + ' ' + sentence[idx + 1].english
+					if self.trigramCounts.get(trigram, 0) > 0:
+						newSentence.append(word)
+				else:
+					newSentence.append(word)
+				idx += 1
+			return newSentence
+		self.rules.append(removeExtraneousArticles)
 		
 	def applyRule(self, rule, sentence):
 		return rule(sentence)
