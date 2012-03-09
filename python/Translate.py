@@ -88,7 +88,7 @@ class Translator:
 					newSentence.append(word)
 					idx += 1
 			return newSentence
-		self.rules.append(flipNounAdj)
+		#self.rules.append(flipNounAdj)
 		
 	def applyRule(self, rule, sentence):
 		return rule(sentence)
@@ -127,11 +127,12 @@ class Translator:
 		lines = infile.readlines()
 		infile.close()
 		data = data.split('\n\n')
-		totalDistance = 0
+		distortions = []
 		missedWords = 0
 		for line, datum in zip(lines, data):
 			line = line.strip('.,:"\n').split()
 			datum = datum.strip('.,:"\n').split()
+			distortions.append([0])
 			for i, d in enumerate(datum):
 				minDistance = 100000
 				for j, l in enumerate(line):
@@ -140,9 +141,12 @@ class Translator:
 						if curDistance < minDistance: minDistance = curDistance
 				if minDistance == 100000: 
 					missedWords += 1
+					distortion = 0
 				else:
-					totalDistance += minDistance 
-		print 'Total error distance: ' + str(totalDistance)
+					distortion = minDistance - distortions[-1][-1] - 1
+				distortions[-1].append(distortion)
+		distortions = [item for sublist in distortions for item in sublist]
+		print 'Total distortion: ' + str(reduce(lambda x, y: x+math.fabs(y), distortions))
 		print 'Words in gold that are not in gato: ' + str(missedWords)
 			
 
