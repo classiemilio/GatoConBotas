@@ -147,7 +147,7 @@ class Translator:
 			idx = 0
 			while idx < sentenceLen:
 				word = sentence[idx]
-				if word.english == 'him' and idx < sentenceLen - 1 and sentence[idx+1].pos == "VERB":
+				if (word.english == 'him' or word.english == 'her' or word.english == 'them') and idx < sentenceLen - 1 and sentence[idx+1].pos == "VERB":
 					newSentence.append(sentence[idx+1])
 					newSentence.append(word)
 					idx += 2
