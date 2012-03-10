@@ -1,0 +1,62 @@
+Greg Jones (gregj)
+Emilio Lopez (elopez1)
+============================================================================
+
+F Language: Spanish
+
+
+============================================================================
+
+Original Test Document (also located in gato.txt).
+
+Había una vez un muchacho joven que vivía en la calle con su gato.
+El muchacho era pobre, y llevaba puestas ropas haraposas.
+El joven casi no tenía para comer, y lo único que se llevaba al estómago era lo que podía encontrar en la basura para su gato y para él.
+Un día, el gato, que se daba cuenta de la pobreza extrema de su amo, cogió unas botas, un sombrero y una capa, los limpió hasta que parecieron nuevos y se los puso.
+A continuación, el gato con botas se fue a cazar al campo, y cuando volvió con un jabalí a sus espaldas, se lo llevó al rey, y le dijo: "Excelentísimo señor, mi amo el marqués le regala este jabalí para que lo disfrute con su familia".
+El rey le dio las gracias, y esa noche en el castillo del reino se cenó jabalí asado, a la salud del marqués.
+Al día siguiente, el gato se volvió a poner las botas y volvió a cazar un jabalí para regalárselo al rey en nombre del marqués.
+El gato con botas repitió durante una semana sus regalos al rey.
+Un día, mientras el gato con botas y su amo estaban en el río bañando y lavándose, pasó la carroza del rey cerca del río. 
+El gato con botas lo vio, y rápidamente le dijo a su amo que se quitara toda la ropa.
+
+============================================================================
+
+The output of our system:
+
+TODO: insert final output here
+
+============================================================================
+
+List of rules we wrote:
+
+============================================================================
+
+Error Analysis:
+
+============================================================================
+
+The output of Google Translate (also located in data/cat.txt):
+
+There once was a young boy living in the street with his cat.
+The boy was poor and ragged clothes he was wearing.
+The young man was hardly eating, and all you had the stomach was what I could find in the trash for your cat and for him.
+One day, the cat realized that extreme poverty of his master, picked up a pair of boots, a hat and a cape, cleaned them until they looked like new and put them on.
+Then the cat went hunting boots to the field, and when he returned with a boar on his back, carried him to the king, and said, "Sir, my master, the Marquis gives this boar for your enjoyment with his family."
+The king thanked him, and that night in the castle of the kingdom had dinner roast boar, health of the Marquis.
+The next day, the cat was put back and returned the boots to hunt a wild boar to give it to the king on behalf of the Marquis.
+Puss in Boots for a week repeated his gifts to the king.
+One day, while Puss and his master were in the river bathing and washing, the king's carriage passed near the river.
+Puss in Boots saw him, and quickly told his master to take off all your clothes. 
+
+============================================================================
+
+Comparative analysis between our system and Google Translate:
+
+Google Translate
+
+============================================================================
+
+Responsibilities of different members of the team: 
+
+We pair programmed a large part of the system. We each added some rules as we saw fit and if they improved the score of the system. Responsibilities were pretty equal. 
