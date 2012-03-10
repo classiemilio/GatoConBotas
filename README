@@ -4,6 +4,12 @@ Emilio Lopez (elopez1)
 
 F Language: Spanish
 
+In most cases, the basic word order of Subject-Verb-Object is the same in both Spanish and English. For example, it's pretty trivial to translate from "Yo corrí una milla" to "I ran a mile". This can be done purely with a Spanish-English dictionary that has entries for different tenses (i.e., it has an entry for "Corrí -> ran"). However, this basic word order tends to be complicated in Spanish when the Subject is doing something to the Object. The act of a person running a mile doesn't actually affect the mile. Meanwhile, the act of eating a pizza does something to the pizza. The Spanish translation of "I ate a pizza" is "Yo me comí una pizza." The word "me", a pronoun, was inserted in between the Subject and the Verb. A slightly different example is "I killed a bear", which is translated to "Yo maté a un oso." The word "a", a preposition, was inserted in between the Verb and the Object. The rules for how to add these complements to verbs are complex. Since these complementary words are not actually present in a 1-to-1 translation to English, something needs to be done to identify them and remove the translated tokens (or not translate them altogether).
+
+Additionally, there is a slightly different word order where there is a third player who's neither the Subject or the Object, like in the sentence "I gave him a gift." "I" is the subject and "a gift" is the object, but "him" is the recipient of the object. I'll call this order Subject-Verb-Recipient-Object. Translated to Spanish, this order is changed to Subject-Recipient-Verb-Object (i.e., "Yo le dí un regalo", where "le" means "for him").
+ 
+Another complexity for translating Spanish to English is that Spanish often uses suffixes to add prepositional clauses to a verb that encompass the Recipient and/or Object from the above word order. For example, the word "damelo" adds the suffixes "me" and "lo" to "da." "Da" means "give", "me" means "to me", and lo means "it." Thus, "Damelo" means "Give it to me" (note that the order of suffixes doesn't even necessarily correlate to the order of the prepositional clauses).
+
 
 ============================================================================
 
