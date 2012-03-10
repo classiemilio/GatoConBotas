@@ -100,7 +100,38 @@ class Translator:
 			return newSentence
 		self.spanishRules.append(stripSeMeFromVerb)
 		
+		def flipLoVerb(sentence):
+			newSentence = []
+			sentenceLen = len(sentence)
+			idx = 0
+			while idx < sentenceLen:
+				word = sentence[idx]
+				if word.spanish in ['lo', 'la', 'los', 'las'] and idx < sentenceLen - 1 and sentence[idx+1].pos == "VERB":
+					newSentence.append(sentence[idx+1])
+					newSentence.append(word)
+					idx += 2
+				else:
+					newSentence.append(word)
+					idx += 1
+			return newSentence
+		self.spanishRules.append(flipLoVerb)
+		
 		### ENGLISH RULES
+		def subProperNouns(sentence):
+			newSentence = []
+			sentenceLen = len(sentence)
+			idx = 0
+			while idx < sentenceLen:
+				word = sentence[idx]
+				if idx < sentenceLen - 3 and word.english == ['the'] and sentence[idx+1].english == ['cat'] and sentence[idx+2].english == ['with'] and sentence[idx+3].english == ['boots']:
+					newSentence.append(Word("<PROPER NOUN>", ["Puss in Boots"], "NOUN"))
+					idx += 4
+				else:
+					newSentence.append(word)
+					idx += 1
+			return newSentence
+		self.englishRules.append(subProperNouns)
+		
 		def separateToFromVerb(sentence):
 			newSentence = []
 			sentenceLen = len(sentence)
@@ -142,7 +173,6 @@ class Translator:
 			newSentence = []
 			sentenceLen = len(sentence)
 			idx = 0
-			p = False
 			while idx < sentenceLen:
 				word = sentence[idx]
 				if word.isNoun() and idx < sentenceLen - 2 and sentence[idx+1].isNoun() and sentence[idx+2].pos == "VERB":
@@ -150,14 +180,9 @@ class Translator:
 					newSentence.append(sentence[idx+2])
 					newSentence.append(sentence[idx+1])
 					idx += 3
-					p = True
 				else:
 					newSentence.append(word)
 					idx += 1
-			if p:
-				self.dumpSentence(sentence)
-				self.dumpSentence(newSentence)
-				print '\n\n'
 			return newSentence
 		#self.englishRules.append(flipNounNounVerb)
 		
@@ -248,8 +273,6 @@ class Translator:
 			idx = 0
 			for wordGrp in sentence:
 				for word in wordGrp.english:
-					if idx == 0:
-						word = word[0].title() + word[1:]
 					if word == "<PERIOD>":
 						result = result[:-1] + '. '
 					elif word == "<COMMA>":
@@ -263,6 +286,10 @@ class Translator:
 					elif word == "<OTHERPUNCT>":
 						result = result[:-1] + unichr(0xFFFD) + ' '
 					else:
+						if idx == 0:
+							word = word[0].title() + word[1:]
+						elif len(result) > 0 and result[-1] == '"':
+							word = word[0].title() + word[1:]
 						result += word + " "
 					idx += 1
 			result = result[:-1] + "\n\n"
