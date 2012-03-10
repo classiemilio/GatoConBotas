@@ -4,59 +4,273 @@ Emilio Lopez (elopez1)
 
 F Language: Spanish
 
+In most cases, the basic word order of Subject-Verb-Object is the same in both
+Spanish and English. For example, it's pretty trivial to translate from "Yo
+corrí una milla" to "I ran a mile". This can be done purely with a
+Spanish-English dictionary that has entries for different tenses (i.e., it has
+an entry for "Corrí -> ran"). However, this basic word order tends to be
+complicated in Spanish when the Subject is doing something to the Object. The
+act of a person running a mile doesn't actually affect the mile. Meanwhile, the
+act of eating a pizza does something to the pizza. The Spanish translation of "I
+ate a pizza" is "Yo me comí una pizza." The word "me", a pronoun, was inserted
+in between the Subject and the Verb. A slightly different example is "I killed a
+bear", which is translated to "Yo maté a un oso." The word "a", a preposition,
+was inserted in between the Verb and the Object. The rules for how to add these
+complements to verbs are complex. Since these complementary words are not
+actually present in a 1-to-1 translation to English, something needs to be done
+to identify them and remove the translated tokens (or not translate them
+altogether).
+
+Additionally, there is a slightly different word order where there is a third
+player who's neither the Subject or the Object, like in the sentence "I gave him
+a gift." "I" is the subject and "a gift" is the object, but "him" is the
+recipient of the object. I'll call this order Subject-Verb-Recipient-Object.
+Translated to Spanish, this order is changed to Subject-Recipient-Verb-Object
+(i.e., "Yo le dí un regalo", where "le" means "for him").
+ 
+Another complexity for translating Spanish to English is that Spanish often uses
+suffixes to add prepositional clauses to a verb that encompass the Recipient
+and/or Object from the above word order. For example, the word "damelo" adds the
+suffixes "me" and "lo" to "da." "Da" means "give", "me" means "to me", and lo
+means "it." Thus, "Damelo" means "Give it to me" (note that the order of
+suffixes doesn't even necessarily correlate to the order of the prepositional
+clauses).
+
+Additionally, in Spanish, verbs have a very large number of possible
+conjugations for different tenses. In cases where English uses helping verbs,
+Spanish purely uses additional morphemes attached to the stem of a verb. For
+example, "regalaría" means "would gift" and "regalaré" means "will gift".
+Another challenge in translating Spanish to English lies in Part of Speech
+divergences. For example, the Spanish phrase "Tengo hambre," literally
+translated word-by-word means "I have hunger." However, the more correct
+translation is "I am hungry," which uses an entirely different verb than "have"
+and an entirely different part of speech than "hunger."
+
+Moreover, another challenge lies in the fact that in Spanish, plural pronouns
+have gender associated with them. For example, "ellos" and "ellas" both mean
+"they," but they imply that the members of the group referred to by "they" are
+male and female, respectively.
 
 ============================================================================
 
-Original Test Document (also located in gato.txt).
+Original Test Document (also located in data/gato.txt).
 
 Había una vez un muchacho joven que vivía en la calle con su gato.
+
 El muchacho era pobre, y llevaba puestas ropas haraposas.
-El joven casi no tenía para comer, y lo único que se llevaba al estómago era lo que podía encontrar en la basura para su gato y para él.
-Un día, el gato, que se daba cuenta de la pobreza extrema de su amo, cogió unas botas, un sombrero y una capa, los limpió hasta que parecieron nuevos y se los puso.
-A continuación, el gato con botas se fue a cazar al campo, y cuando volvió con un jabalí a sus espaldas, se lo llevó al rey, y le dijo: "Excelentísimo señor, mi amo el marqués le regala este jabalí para que lo disfrute con su familia".
-El rey le dio las gracias, y esa noche en el castillo del reino se cenó jabalí asado, a la salud del marqués.
-Al día siguiente, el gato se volvió a poner las botas y volvió a cazar un jabalí para regalárselo al rey en nombre del marqués.
+
+El joven casi no tenía para comer, y lo único que se llevaba al estómago era lo
+que podía encontrar en la basura para su gato y para él.
+
+Un día, el gato, que se daba cuenta de la pobreza extrema de su amo, cogió unas
+botas, un sombrero y una capa, los limpió hasta que parecieron nuevos y se los
+puso.
+
+A continuación, el gato con botas se fue a cazar al campo, y cuando volvió con
+un jabalí a sus espaldas, se lo llevó al rey, y le dijo: "Excelentísimo señor,
+mi amo el marqués le regala este jabalí para que lo disfrute con su familia".
+
+El rey le dio las gracias, y esa noche en el castillo del reino se cenó jabalí
+asado, a la salud del marqués.
+
+Al día siguiente, el gato se volvió a poner las botas y volvió a cazar un jabalí
+para regalárselo al rey en nombre del marqués.
+
 El gato con botas repitió durante una semana sus regalos al rey.
-Un día, mientras el gato con botas y su amo estaban en el río bañando y lavándose, pasó la carroza del rey cerca del río. 
-El gato con botas lo vio, y rápidamente le dijo a su amo que se quitara toda la ropa.
+
+Un día, mientras el gato con botas y su amo estaban en el río bañando y
+lavándose, pasó la carroza del rey cerca del río.
+
+El gato con botas lo vio, y rápidamente le dijo a su amo que se quitara toda la
+ropa.
 
 ============================================================================
 
 The output of our system:
 
-TODO: insert final output here
+Had a young time boy that was living in the street with his cat.
+
+The boy was poor, and was taking set ragged clothes.
+
+The young almost had no for to eat, and only it that was taking to the stomach
+was it that could to find in garbage for his cat and for he.
+
+A day, the cat, that was giving calculation of extreme poverty of his master,
+took boots, a hat and layer, cleaned until that seemed new and put the.
+
+To continuation, Puss in Boots was to hunt to the country, and when came back
+with a wild boar to their backs, took it to the king, and he said: "Excellency
+man, my master marquis he give this wild boar for that enjoy it with his
+family".
+
+The king he gave thanks, and that night in castle of the realm had supper wild
+boar roast, to health of the marquis.
+
+To the following day, the cat came back to put boots and came back to hunt wild
+boar for to give him it to the king in name of the marquis.
+
+Puss in Boots repeated during their week gifts to the king.
+
+A day, meanwhile Puss in Boots and his master were in the river bathing and
+washing, passed carriage of the king near of the river.
+
+Puss in Boots saw it, and quickly he said to his master that would take out all
+clothes.
 
 ============================================================================
 
-List of rules we wrote:
+Reorder and Rewrite Rules:
+
+Before applying any rules, we generate a Word object for each of the Spanish
+words in each input sentence. This input words contains the Spanish word, the
+English word group and the part of speech (determined from our dictionary). The
+English word is a list of words since some Spanish words map to more than one
+English word (e.g., “al” -> “to the”).
+
+We added two different types of rules to our system. First we added Spanish
+reordering rules. These rules reorder the sequence of Word objects based on the
+Spanish word for each token (and possible considering parts of speech). Then we
+have a set of English reordering and rewrite rules. These rules are applied to
+the sequence of English words. When we apply our rules, we first run our Spanish
+rules until the system converges (i.e., none of the rules generate any further
+changes to the output). Then, we repeat the process with the English rules. Once
+the English rules converge, we have determined our final output.
+
+We have two Spanish rules. The first removes “se” or “me” if it precedes a verb,
+since these words in this context have no one-to-one mapping to an English
+sentence. The second rule looks for instances of “la”, “lo”, “las”, or “los”
+followed by a verb, and reorders the two so that the pronoun follows the verb.
+
+We also have many English reorder and rewrite rules:
+- A simple rule to watch for incorrect translations of proper nouns in our
+  corpus, and substitute the correct version (e.g., “the cat with boots” ->
+  “Puss in Boots”).
+- A rule to separate the single Word object “to <verb>” into two separate
+  objects.
+- A rule to merge any instance of “to to” into the single preposition “to”.
+- A rule that flips the order of a noun followed by an adjective, so that the
+  adjective precedes the noun (e.g., “muchacho joven” maps to “man young” and is
+  reordered to “young man”).
+- A rule that looks for the trigram NOUN-NOUN-VERB, and reorders this
+  NOUN-VERB-NOUN. We ended up not using this rule, because the system performs
+  better without it. An example of a case we hoped to capture with this rule is
+  “rey le dio”, which maps to “king him gave”, and is then reordered to “king
+  gave him”).
+- A rule that converts “him” to “he” if the subsequent word is a verb (e.g., “se
+  lavó ” -> “him bathed” -> “he bathed”).
+- A rule that flips the order of “no” followed by a verb, so that the verb
+  precedes “no” (e.g., "no tenía comida" -> "no had food" -> “had no food”).
+- A rule that removes a Word object if all of its English words have been
+  removed.
+- A rule that looks for extraneous articles by using a large corpus of English
+  bigrams and trigrams imported from NLTK (the Brown corpus). Essentially, if an
+  article was in the middle of a trigram that never occurred in the Brown corpus
+  (which has over 1,000,000 words in the text), we assumed it was an extraneous
+  article.
 
 ============================================================================
 
 Error Analysis:
+
+We used two different metrics for error analysis. First, we calculated an
+overall distortion score between our sentences and the Google Translated version
+of the text. The distortion for each word in our output data is calculated as
+
+  d = index in the gold output - index of preceding word in the gold output - 1
+
+The total distortion score is the sum of all distortions across all of the words
+in all of the sentences. If a word does not appear in the gold output, its
+distortion is set to 0. A different metric is used to track these errors: we
+simply keep a count of the total number of words that were not present in the
+gold output. For both of these rules, the lower the number, the better the
+score. A score of (0,0) would be a perfect match.
+
+When implementing a rule, we were able to judge based on these two heuristics
+whether or not the rule helped or hurt the overall performance. Occasionally, a
+rule would help one of the metrics but hurt the other, so it was important to
+weigh the actual amount of improvement and also consider the text of the output,
+rather than strictly considering the values of our heuristics.
+
+One of the most common errors we ran into with our system was with the Spanish
+words like “lo/la” and “los/las,” which, based on where they are positioned in
+the context of a sentence can add prepositional clauses. For example, in the
+sentence “... el gato... cogió unas botas, un sombrero y una capa, los
+limpió...,” the word “los” means that the subject of the sentence (“el gato”, or
+“the cat”) carried out the action of the verb following “los”, and that this
+action was carried out on the items preceding “los.” This is very hard to
+capture when using simple word-to-word translations. One way to approach this
+problem is to develop an algorithm to parse a sentence into clauses and find
+these “glue” terms that determine which order the clauses should take.
+
+We felt that given our simple system of word-by-word translation, it would be
+hard to get a much more fluent and faithful output using simple reordering and
+rewrite rules. One of the biggest problems going forward is that each Spanish
+word maps to exactly one canonical English translation. In reality though, this
+is far from the truth. Many Spanish words have multiple, distinct meanings in
+English depending on their context. Using a statistical model that chooses the
+proper English translation based on the surrounding Spanish words could give a
+huge boost in faithful translation. It’s impossible to generate a correctly
+ordered (fluent) output if we never even obtain the correct word-to-word
+translation of the input in the first place.
 
 ============================================================================
 
 The output of Google Translate (also located in data/cat.txt):
 
 There once was a young boy living in the street with his cat.
+
 The boy was poor and ragged clothes he was wearing.
-The young man was hardly eating, and all you had the stomach was what I could find in the trash for your cat and for him.
-One day, the cat realized that extreme poverty of his master, picked up a pair of boots, a hat and a cape, cleaned them until they looked like new and put them on.
-Then the cat went hunting boots to the field, and when he returned with a boar on his back, carried him to the king, and said, "Sir, my master, the Marquis gives this boar for your enjoyment with his family."
-The king thanked him, and that night in the castle of the kingdom had dinner roast boar, health of the Marquis.
-The next day, the cat was put back and returned the boots to hunt a wild boar to give it to the king on behalf of the Marquis.
+
+The young man was hardly eating, and all you had the stomach was what I could
+find in the trash for your cat and for him.
+
+One day, the cat realized that extreme poverty of his master, picked up a pair
+of boots, a hat and a cape, cleaned them until they looked like new and put them
+on.
+
+Then the cat went hunting boots to the field, and when he returned with a boar
+on his back, carried him to the king, and said, "Sir, my master, the Marquis
+gives this boar for your enjoyment with his family."
+
+The king thanked him, and that night in the castle of the kingdom had dinner
+roast boar, health of the Marquis.
+
+The next day, the cat was put back and returned the boots to hunt a wild boar to
+give it to the king on behalf of the Marquis.
+
 Puss in Boots for a week repeated his gifts to the king.
-One day, while Puss and his master were in the river bathing and washing, the king's carriage passed near the river.
+
+One day, while Puss and his master were in the river bathing and washing, the
+king's carriage passed near the river.
+
 Puss in Boots saw him, and quickly told his master to take off all your clothes. 
 
 ============================================================================
 
 Comparative analysis between our system and Google Translate:
 
-Google Translate
+Since Google Translate uses Statistical Machine Translation and has an
+incredibly huge amount of training data at its disposal, it is better at making
+translation choices that correspond to more commonly-written text. For example,
+a literal and fluent translation of the Spanish text “el joven casi no tenía
+para comer” is “the young man had almost nothing to eat.” While we struggled to
+even reach such a translation, Google Translate translated that portion to a
+more commonly used phrase “the young man was hardly eating.”
+
+One area in which we do better than Google Translate is in maintaining the
+correct point of view for a sentence. In a couple of occurrences, Google
+Translate changed the point of view from third to second. For example, the
+second sentence ends with, “para su gato y para él,” which should translate to
+“for his cat and for him” or “for him and his cat.” However, because the
+possessive pronoun “su” could be used for either third-person or second-person
+point of view, Google Translate picked the wrong one. Meanwhile, our system
+always chooses “his” as the specific translation for the word “su” and thereby,
+always has the correct point of view.
 
 ============================================================================
 
 Responsibilities of different members of the team: 
 
-We pair programmed a large part of the system. We each added some rules as we saw fit and if they improved the score of the system. Responsibilities were pretty equal. 
+We pair programmed a large part of the system. We each added rules as we saw
+fit, if they improved the score of the system. Responsibilities were pretty
+equal.
