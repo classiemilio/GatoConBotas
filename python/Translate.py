@@ -7,11 +7,15 @@ class Word:
 		self.english = english
 		self.spanish = spanish
 		self.pos = pos
+		
+	def isNoun(self):
+			return self.pos == 'NOUN' or self.pos == 'PRONOUN'
 
 class Translator:
 	
 	def __init__(self):
-		self.rules = []
+		self.englishRules = []
+		self.spanishRules = []
 		self.addRules()
 		self.bigramCounts = None
 		self.trigramCounts = None
@@ -80,17 +84,43 @@ class Translator:
 			newSentence.extend(newWords)
 		return newSentence
 		
+	def dumpSentence(self, sentence):
+		print ' '.join(map(lambda word: ' '.join(word.english), sentence))
+		
 	def addRules(self):
 		
+		### SPANISH RULES
+		def stripSeMeFromVerb(sentence):
+			newSentence = []
+			sentenceLen = len(sentence)
+			for idx,word in enumerate(sentence):
+				if (word.spanish == 'se' or word.spanish == 'me') and idx < sentenceLen - 1 and sentence[idx+1].pos == "VERB":
+					continue
+				newSentence.append(word)
+			return newSentence
+		self.spanishRules.append(stripSeMeFromVerb)
+		
+		### ENGLISH RULES
+		def separateToFromVerb(sentence):
+			newSentence = []
+			sentenceLen = len(sentence)
+			for idx,word in enumerate(sentence):
+				if word.english[0] == 'to' and len(word.english) > 1:
+					word.english = word.english[1:]
+					newSentence.append(Word('a', ['to'], 'PREP'))
+				newSentence.append(word)
+			return newSentence
+		self.englishRules.append(separateToFromVerb)
+
 		def mergeTo(sentence):
 			newSentence = []
 			sentenceLen = len(sentence)
 			for idx,word in enumerate(sentence):
-				if word.english[-1] == 'to' and idx < sentenceLen - 1 and sentence[idx+1].english[0] == 'to':
-					sentence[idx+1].english = sentence[idx+1].english[1:]
+				if word.english == ['to'] and idx < sentenceLen - 1 and sentence[idx+1].english == ['to']:
+					continue
 				newSentence.append(word)
 			return newSentence
-		self.rules.append(mergeTo)
+		self.englishRules.append(mergeTo)
 		
 		def flipNounAdj(sentence):
 			newSentence = []
@@ -98,7 +128,7 @@ class Translator:
 			idx = 0
 			while idx < sentenceLen:
 				word = sentence[idx]
-				if (word.pos == 'NOUN' or word.pos == 'PRONOUN') and idx < sentenceLen - 2 and sentence[idx+1].pos == "ADJ":
+				if word.isNoun() and idx < sentenceLen - 1 and sentence[idx+1].pos == "ADJ":
 					newSentence.append(sentence[idx+1])
 					newSentence.append(word)
 					idx += 2
@@ -106,7 +136,60 @@ class Translator:
 					newSentence.append(word)
 					idx += 1
 			return newSentence
-		self.rules.append(flipNounAdj)
+		self.englishRules.append(flipNounAdj)
+		
+		def flipNounNounVerb(sentence):
+			newSentence = []
+			sentenceLen = len(sentence)
+			idx = 0
+			p = False
+			while idx < sentenceLen:
+				word = sentence[idx]
+				if word.isNoun() and idx < sentenceLen - 2 and sentence[idx+1].isNoun() and sentence[idx+2].pos == "VERB":
+					newSentence.append(word)
+					newSentence.append(sentence[idx+2])
+					newSentence.append(sentence[idx+1])
+					idx += 3
+					p = True
+				else:
+					newSentence.append(word)
+					idx += 1
+			if p:
+				self.dumpSentence(sentence)
+				self.dumpSentence(newSentence)
+				print '\n\n'
+			return newSentence
+		#self.englishRules.append(flipNounNounVerb)
+		
+		def himToHe(sentence):
+			newSentence = []
+			sentenceLen = len(sentence)
+			idx = 0
+			while idx < sentenceLen:
+				word = sentence[idx]
+				if word.english == ['him'] and idx < sentenceLen - 1 and sentence[idx+1].pos == "VERB":
+					word.english = ['he']
+				newSentence.append(word)
+				idx += 1
+			return newSentence
+		self.englishRules.append(himToHe)
+		
+		# "No tenia comida" -> "Had no food" ('no' should go after the next word if its a verb)
+		def flipNo(sentence):
+			newSentence = []
+			sentenceLen = len(sentence)
+			idx = 0
+			while idx < sentenceLen:
+				word = sentence[idx]
+				if word.english == ['no'] and idx < sentenceLen - 1 and sentence[idx+1].pos == "VERB":
+					newSentence.append(sentence[idx+1])
+					newSentence.append(word)
+					idx += 2
+				else:
+					newSentence.append(word)
+					idx += 1
+			return newSentence
+		self.englishRules.append(flipNo)
 		
 		def removeEmptyWords(sentence):
 			newSentence = []
@@ -118,24 +201,7 @@ class Translator:
 					newSentence.append(word)
 				idx += 1
 			return newSentence
-		self.rules.append(removeEmptyWords)
-
-		# "No tenia comida" -> "Had no food" ('no' should go after the next word if its a verb)
-		def flipNo(sentence):
-			newSentence = []
-			sentenceLen = len(sentence)
-			idx = 0
-			while idx < sentenceLen:
-				word = sentence[idx]
-				if word.english == ['no'] and idx < sentenceLen - 2 and sentence[idx+1].pos == "VERB":
-					newSentence.append(sentence[idx+1])
-					newSentence.append(word)
-					idx += 2
-				else:
-					newSentence.append(word)
-					idx += 1
-			return newSentence
-		self.rules.append(flipNo)
+		self.englishRules.append(removeEmptyWords)
 
 		def removeExtraneousArticles(sentence):
 			if not self.bigramCounts:
@@ -153,23 +219,7 @@ class Translator:
 					newSentence.append(word)
 				idx += 1
 			return newSentence
-		self.rules.append(removeExtraneousArticles)
-		
-		def flipHimVerb(sentence):
-			newSentence = []
-			sentenceLen = len(sentence)
-			idx = 0
-			while idx < sentenceLen:
-				word = sentence[idx]
-				if (word.english == ['him'] or word.english == ['her'] or word.english == ['them']) and idx < sentenceLen - 1 and sentence[idx+1].pos == "VERB":
-					newSentence.append(sentence[idx+1])
-					newSentence.append(word)
-					idx += 2
-				else:
-					newSentence.append(word)
-					idx += 1
-			return newSentence
-		self.rules.append(flipHimVerb)
+		self.englishRules.append(removeExtraneousArticles)
 		
 	def applyRule(self, rule, sentence):
 		return rule(sentence)
@@ -179,10 +229,18 @@ class Translator:
 		result = ""
 		for sentence in data:
 			
+			# Apply spanish rules first
+			while True:
+				oldSentence = sentence
+				for rule in self.spanishRules:
+					sentence = self.applyRule(rule, sentence)
+				if oldSentence == sentence:
+					break
+			
 			# Apply the rules repeatedly until we converge to a single sentence
 			while True:
 				oldSentence = sentence
-				for rule in self.rules:
+				for rule in self.englishRules:
 					sentence = self.applyRule(rule, sentence)
 				if oldSentence == sentence:
 					break
